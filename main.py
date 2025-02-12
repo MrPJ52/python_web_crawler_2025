@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-url = "https://weworkremotely.com/categories/remote-full-stack-programming-jobs#"
+url = "https://weworkremotely.com/remote-full-time-jobs?page=1"
 
 #모든 job의의 정보를 저장하는 리스트
 all_jobs = list()
@@ -37,13 +37,17 @@ def scrape_page(url):
 
         work_type = categories[0]
         paycheck = "Paycheck is unknown"
+        region = "Region is unknown"
 
         #paycheck가 적혀있는 경우
-        if ("$" in categories[1]):
-            paycheck = categories[1]
-            region = categories[2:]
-        else:
-            region = categories[1:]
+        try:
+            if ("$" in categories[1]):
+                paycheck = categories[1]
+                region = categories[2:]
+            else:
+                region = categories[1:]
+        except:
+            pass
 
         #각 job에 대한 데이터 dict 생성성
         job_data_dict = {
@@ -61,14 +65,21 @@ def scrape_page(url):
 
 scrape_page(url)
 
+response = requests.get("https://weworkremotely.com/remote-full-time-jobs?page=1")
 
+soup = BeautifulSoup(response.content, "html.parser", )
+
+buttons = len(soup.find("div", class_="pagination").find_all("span", class_="page"))
 
 #확인용 print
-for job in all_jobs:
-    print(job["title"])
-    print(job["company"])
-    print(job["work_type"], job["paycheck"])
-    print(job["region"])
-    print(job["url"])
-    print("\n")
+# for job in all_jobs:
+#     print(job["title"])
+#     print(job["company"])
+#     print(job["work_type"], job["paycheck"])
+#     print(job["region"])
+#     print(job["url"])
+#     print("\n")
 
+for i in range(buttons):
+    url = f"https://weworkremotely.com/remote-full-time-jobs?page={i+1}"
+    print(url)
