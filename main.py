@@ -63,13 +63,21 @@ def scrape_page(url):
         all_jobs.append(job_data_dict)
 
 
-scrape_page(url)
+def get_pages(url):
+    response = requests.get(url)
 
-response = requests.get("https://weworkremotely.com/remote-full-time-jobs?page=1")
+    soup = BeautifulSoup(response.content, "html.parser", )
+    try:
+        return len(soup.find("div", class_="pagination").find_all("span", class_="page"))
+    except:
+        return 1
 
-soup = BeautifulSoup(response.content, "html.parser", )
+total_pages = get_pages(url)
 
-buttons = len(soup.find("div", class_="pagination").find_all("span", class_="page"))
+for i in range(total_pages):
+    url = f"https://weworkremotely.com/remote-full-time-jobs?page={i+1}"
+    scrape_page(url)
+
 
 #확인용 print
 # for job in all_jobs:
@@ -79,7 +87,4 @@ buttons = len(soup.find("div", class_="pagination").find_all("span", class_="pag
 #     print(job["region"])
 #     print(job["url"])
 #     print("\n")
-
-for i in range(buttons):
-    url = f"https://weworkremotely.com/remote-full-time-jobs?page={i+1}"
-    print(url)
+print(len(all_jobs))
