@@ -1,4 +1,6 @@
 import requests
+import time
+from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
 keywords = [
@@ -19,11 +21,21 @@ class JobPage:
     def __init__(self, keyword):
         self.keyword = keyword
         self.url = "https://remoteok.com/remote-" + self.keyword + "-jobs"
-        response = requests.get(self.url, headers={
-            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-        })
-        self.soup = BeautifulSoup(response.content, "html.parser")
+        p = sync_playwright().start()
+        browser = p.chromium.launch(headless=False)
+        page = browser.new_page()
+
+        page.goto(self.url)
+        time.sleep(2)
+
+        for i in range(5):
+            page.keyboard.down("End")
+            time.sleep(1)
+
+        self.soup = BeautifulSoup(page.content(), "html.parser")
         self.jobs_list = list()
+
+        p.stop()
     
     def find_jobs(self):
         jobs_raw_data = self.soup.find("table", id="jobsboard").find_all("tr", class_="job")
@@ -43,7 +55,7 @@ class JobPage:
             print(job_info.location, job_info.paycheck)
             print(job_info.url, "\n")
         
-        print(f"total jobs: {len(self.jobs_list)}\n")
+        print(f"total {self.keyword} jobs: {len(self.jobs_list)}\n")
 
 
 JobPage_flutter = JobPage(keywords[0])
