@@ -1,4 +1,3 @@
-import requests
 import time
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
@@ -58,6 +57,6 @@ class JobPage:
         print(f"total {self.keyword} jobs: {len(self.jobs_list)}\n")
 
 
-JobPage_flutter = JobPage(keywords[0])
+JobPage_flutter = JobPage(keywords[1])
 JobPage_flutter.find_jobs()
 JobPage_flutter.print_jobs()
