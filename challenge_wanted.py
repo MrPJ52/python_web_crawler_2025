@@ -24,9 +24,19 @@ class JobPageWanted:
         page.goto("https://www.wanted.co.kr/search?query=" + self.keyword + "&tab=position")
         time.sleep(2)
 
-        for i in range(5):
+        last_time = time.time()
+        last_height = page.evaluate('document.body.scrollHeight')
+        while True:
             page.keyboard.down("End")
-            time.sleep(1)
+            current_time = time.time()
+            new_height = page.evaluate('document.body.scrollHeight')
+            if current_time - last_time > 1:
+                new_height = page.evaluate('document.body.scrollHeight')
+                if new_height == last_height:
+                    break
+                else:
+                    last_height = new_height
+                    last_time = time.time()
 
         self.soup = BeautifulSoup(page.content(), "html.parser")
 
