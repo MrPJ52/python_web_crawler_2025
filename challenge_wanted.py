@@ -1,4 +1,5 @@
 import time
+import csv
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
@@ -63,7 +64,16 @@ class JobPageWanted:
 
         print(f"total {self.keyword} jobs: {len(self.jobs_list)}\n")
 
+    def export_csv(self):
+        file = open("jobs_for_"+self.keyword+".csv", mode="w", encoding="utf-8", newline="")
+        writter = csv.writer(file)
+        writter.writerow(["Title", "Company", "reward", "url"])
+
+        for job_info in self.jobs_list:
+            writter.writerow([job_info.title, job_info.company, job_info.reward, job_info.url])
+
     
 job_page_flutter = JobPageWanted("flutter")
 job_page_flutter.find_jobs()
 job_page_flutter.print_jobs()
+job_page_flutter.export_csv()
