@@ -30,7 +30,7 @@ class JobPageWanted:
             page.keyboard.down("End")
             current_time = time.time()
             new_height = page.evaluate('document.body.scrollHeight')
-            if current_time - last_time > 1:
+            if current_time - last_time > 3:
                 new_height = page.evaluate('document.body.scrollHeight')
                 if new_height == last_height:
                     break
@@ -59,7 +59,7 @@ class JobPageWanted:
                 continue
         
         print(f"Scraping for {self.keyword} is done.\n Found {cnt} jobs, {err_cnt} errors occured.\n")
-    
+
     def print_jobs(self):
         print(f"Jobs for {self.keyword}:\n")
         for job_info in self.jobs_list:
@@ -71,18 +71,21 @@ class JobPageWanted:
         print(f"total {self.keyword} jobs: {len(self.jobs_list)}\n")
 
     def export_csv(self):
-        file = open("jobs_for_"+self.keyword+".csv", mode="w", encoding="utf-8", newline="")
+        file = open("wanted_"+self.keyword+".csv", mode="w", encoding="utf-8", newline="")
         writter = csv.writer(file)
         writter.writerow(self.jobs_list[0].__dict__.keys())
 
         for job_info in self.jobs_list:
             writter.writerow([job_info.title, job_info.company, job_info.reward, job_info.url])
 
-    
-job_page_flutter = JobPageWanted("flutter")
-job_page_flutter.find_jobs()
-job_page_flutter.export_csv()
 
-job_page_python = JobPageWanted("python")
-job_page_python.find_jobs()
-job_page_python.export_csv()
+keywords = [
+    "flutter",
+    "python",
+    "golang"
+]
+
+for keyword in keywords:
+    crawling = JobPageWanted(keyword)
+    crawling.find_jobs()
+    crawling.export_csv()
