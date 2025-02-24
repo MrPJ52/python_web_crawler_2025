@@ -19,6 +19,9 @@ class CrawlerWanted:
         self.keyword = keyword
         self.jobs_list = list()
 
+    ######## Find Method ########
+    def find_jobs(self):
+        #### Get html from website ####
         p = sync_playwright().start()
         browser = p.chromium.launch(headless=False)
         page = browser.new_page()
@@ -26,7 +29,7 @@ class CrawlerWanted:
         page.goto("https://www.wanted.co.kr/search?query=" + self.keyword + "&tab=position")
         time.sleep(2)
 
-        ######## Scroll to the end of Page ########
+        #### Scroll to the end of Page ####
         last_time = time.time()
         last_height = page.evaluate('document.body.scrollHeight')
         while True:
@@ -42,13 +45,12 @@ class CrawlerWanted:
                     last_height = new_height
                     last_time = time.time()
 
-        self.soup = BeautifulSoup(page.content(), "html.parser")
+        soup = BeautifulSoup(page.content(), "html.parser")
 
         p.stop()
 
-    ######## Find Method ########
-    def find_jobs(self):
-        jobs_raw_data = self.soup.find_all("div", role="listitem")
+        #### Find jobs data from html soup
+        jobs_raw_data = soup.find_all("div", role="listitem")
         cnt = 0
         err_cnt = 0
         for job in jobs_raw_data:
@@ -78,7 +80,7 @@ class CrawlerWanted:
 
     ######## Export to CSV Method ########
     def export_csv(self):
-        file = open("wanted_"+self.keyword+".csv", mode="w", encoding="utf-8", newline="")
+        file = open("wanted_"+self.keyword+".csv", mode="w", encoding="UTF-8-sig", newline="")
         writter = csv.writer(file)
         writter.writerow(self.jobs_list[0].__dict__.keys())
 
