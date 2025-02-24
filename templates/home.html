@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Job Scrapper</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
   </head>
   <body>
-    <h1>Hello, {{name}}</h1>
-    <h1>Here is your Job Scrapper</h1>
-    <h4>Which job do you want?</h4>
-    <form action="/search">
-      <input type="text" name="keyword" placeholder="Write keyword please" />
-      <button>Search</button>
-    </form>
+    <main class="container">
+      <h1>Hello, {{name}}</h1>
+      <h1>Here is your Job Scrapper</h1>
+      <h4>Which job do you want?</h4>
+      <form action="/search">
+        <input type="text" name="keyword" placeholder="Write keyword please" />
+        <button>Search</button>
+      </form>
+    </main>
   </body>
 </html>
