@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, send_file
 from crawler_wanted import Job, CrawlerWanted
 
 app = Flask("JobScrapper")
-app.config["JSON_AS_ASCII"] = False
 
 db = dict()
 
@@ -16,12 +15,16 @@ def testing():
 
 @app.route("/search")
 def search():
-    keyword = request.args.get("keyword")
-    
-    if (keyword == "") or (keyword == None):
+    try:
+        #### Keep the keyword small letter without space character
+        keyword = request.args.get("keyword").strip().lower()
+        if keyword == "":
+            raise
+    #### Error occurs when keyword is "" or None
+    except:
         return redirect("/")
 
-
+    #### Find Database first to make website faster
     if keyword in db:
         jobs_list = db[keyword]
     else:
@@ -34,9 +37,11 @@ def search():
 
 @app.route("/export")
 def export():
-    keyword = request.args.get("keyword")
-    
-    if (keyword == "") or (keyword == None):
+    try:
+        keyword = request.args.get("keyword").strip().lower()
+        if keyword == "":
+            raise
+    except:
         return redirect("/")
     
     if keyword not in db:
