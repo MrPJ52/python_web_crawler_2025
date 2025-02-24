@@ -3,6 +3,10 @@ from crawler_wanted import Job, CrawlerWanted
 
 app = Flask("JobScrapper")
 
+
+db = dict()
+
+
 @app.route("/")
 def home():
     return render_template("home.html", name = "Park")
@@ -14,9 +18,15 @@ def testing():
 @app.route("/search")
 def search():
     keyword = request.args.get("keyword")
-    crawler = CrawlerWanted(keyword)
-    crawler.find_jobs()
-    jobs_list = crawler.jobs_list
+
+    if keyword in db:
+        jobs_list = db[keyword]
+    else:
+        crawler = CrawlerWanted(keyword)
+        crawler.find_jobs()
+        jobs_list = crawler.jobs_list
+        db[keyword] = jobs_list
+    
     return render_template("search.html", keyword = keyword, jobs = jobs_list)
 
 
