@@ -4,6 +4,7 @@ from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
 
+######## Job Class ########
 class Job:
     def __init__(self, title, company, reward, url):
         self.title = title
@@ -12,7 +13,8 @@ class Job:
         self.url = url
 
 
-class JobPageWanted:
+######## Job Crawler Class ########
+class CrawlerWanted:
     def __init__(self, keyword):
         self.keyword = keyword
         self.jobs_list = list()
@@ -24,12 +26,14 @@ class JobPageWanted:
         page.goto("https://www.wanted.co.kr/search?query=" + self.keyword + "&tab=position")
         time.sleep(2)
 
+        ######## Scroll to the end of Page ########
         last_time = time.time()
         last_height = page.evaluate('document.body.scrollHeight')
         while True:
             page.keyboard.down("End")
             current_time = time.time()
             new_height = page.evaluate('document.body.scrollHeight')
+            # Check if there is no update in body for 3 sec
             if current_time - last_time > 3:
                 new_height = page.evaluate('document.body.scrollHeight')
                 if new_height == last_height:
@@ -42,6 +46,7 @@ class JobPageWanted:
 
         p.stop()
 
+    ######## Find Method ########
     def find_jobs(self):
         jobs_raw_data = self.soup.find_all("div", role="listitem")
         cnt = 0
@@ -60,6 +65,7 @@ class JobPageWanted:
         
         print(f"Scraping for {self.keyword} is done.\n Found {cnt} jobs, {err_cnt} errors occured.\n")
 
+    ######## Print Method ########
     def print_jobs(self):
         print(f"Jobs for {self.keyword}:\n")
         for job_info in self.jobs_list:
@@ -70,6 +76,7 @@ class JobPageWanted:
 
         print(f"total {self.keyword} jobs: {len(self.jobs_list)}\n")
 
+    ######## Export to CSV Method ########
     def export_csv(self):
         file = open("wanted_"+self.keyword+".csv", mode="w", encoding="utf-8", newline="")
         writter = csv.writer(file)
@@ -79,13 +86,14 @@ class JobPageWanted:
             writter.writerow([job_info.title, job_info.company, job_info.reward, job_info.url])
 
 
-keywords = [
-    "flutter",
-    "python",
-    "golang"
-]
+######## Testing ########
+# keywords = [
+#     "flutter",
+#     "python",
+#     "golang"
+# ]
 
-for keyword in keywords:
-    crawling = JobPageWanted(keyword)
-    crawling.find_jobs()
-    crawling.export_csv()
+# for keyword in keywords:
+#     crawling = CrawlerWanted(keyword)
+#     crawling.find_jobs()
+#     crawling.export_csv()
