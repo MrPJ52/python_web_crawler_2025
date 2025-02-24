@@ -1,13 +1,10 @@
+from flask import Flask
 from crawler_wanted import Job, CrawlerWanted
 
+app = Flask("JobScraper")
 
-keywords = [
-    "flutter",
-    "python",
-    "golang"
-]
+@app.route("/")
+def home():
+    return "Hello, world!"
 
-for keyword in keywords:
-    crawling = CrawlerWanted(keyword)
-    crawling.find_jobs()
-    crawling.export_csv()
+app.run(debug=True)
