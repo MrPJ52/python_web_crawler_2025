@@ -11,5 +11,9 @@ def home():
 def testing():
     return "Testing..."
 
+@app.route("/search")
+def search():
+    return render_template("search.html")
+
 #### if replit, run("0.0.0.0")
 app.run(debug=True)
