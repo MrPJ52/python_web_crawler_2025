@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from crawler_wanted import Job, CrawlerWanted
 
-app = Flask("JobScraper")
+app = Flask("JobScrapper")
 
 @app.route("/")
 def home():
@@ -15,5 +15,5 @@ def testing():
 def search():
     return render_template("search.html")
 
-#### if replit, run("0.0.0.0")
-app.run(debug=True)
+
+app.run(host="0.0.0.0", debug=True)
