@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from crawler_wanted import Job, CrawlerWanted
 
 app = Flask("JobScrapper")
@@ -13,7 +13,11 @@ def testing():
 
 @app.route("/search")
 def search():
-    return render_template("search.html")
+    keyword = request.args.get("keyword")
+    crawler = CrawlerWanted(keyword)
+    crawler.find_jobs()
+    jobs_list = crawler.jobs_list
+    return render_template("search.html", keyword = keyword, jobs = jobs_list)
 
 
 app.run(host="0.0.0.0", debug=True)
